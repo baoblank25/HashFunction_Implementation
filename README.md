@@ -236,6 +236,3 @@ URLHashTable/
 **Brian Bao Hoang**
 - [GitHub](https://github.com/baoblank25)
 - [LinkedIn](https://www.linkedin.com/in/brian-hoang-420664288/)
-
-Arizona State University | CSE310
-
