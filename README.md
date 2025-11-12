@@ -5,6 +5,7 @@
 
 ## Table of Contents
 - [Overview](#overview)
+- [UML Class Diagram](#uml-class-diagram)
 - [Hash Functions](#hash-functions)
 - [Features](#features)
 - [Quick Start](#quick-start)
@@ -46,6 +47,143 @@ The system provides **six distinct configurations** combining three hash functio
 | 4 | Polynomial Rolling | Quadratic | α < 0.8, Balanced performance |
 | 5 | Universal | Linear | α < 0.5, Theoretical guarantees |
 | 6 | Universal | Quadratic | α < 0.9, Worst-case optimized |
+
+---
+
+## UML Class Diagram
+
+The following diagram illustrates the system architecture and relationships between classes:
+
+```mermaid
+classDiagram
+    class HashTypes {
+        <<enumeration>>
+        BITWISE_HASH
+        POLYNOMIAL_HASH
+        UNIVERSAL_HASH
+    }
+    
+    class ProbingMethod {
+        <<enumeration>>
+        LINEAR_PROBING
+        QUADRATIC_PROBING
+    }
+    
+    class SlotStatus {
+        <<enumeration>>
+        EMPTY
+        OCCUPIED
+        DELETED
+    }
+    
+    class HashEntry {
+        +string url
+        +SlotStatus status
+        +HashEntry()
+    }
+    
+    class HashFunctions {
+        -unsigned long k
+        -unsigned long a
+        -unsigned long b
+        +HashFunctions()
+        +bitwiseHash(url: string, size: int) unsigned long
+        +polynomialHash(url: string, size: int) unsigned long
+        +universalHash(url: string, size: int) unsigned long
+    }
+    
+    class Statistics {
+        -int numComp
+        -int maxComp
+        -int numQueries
+        -clock_t totalTime
+        +Statistics()
+        +recordQuery(comp: int, time: clock_t) void
+        +reset() void
+        +display(tableSize: int, numElements: int, loadFactor: double, hashType: HashType) void
+        +getTotalComp() int
+        +getMaxComp() int
+        +getNumQueries() int
+        +getAvgComparisons() double
+        +getAvgTime() double
+    }
+    
+    class URLHashTable {
+        -vector~HashEntry~ table
+        -int size
+        -int numElements
+        -HashFunctions hashFunc
+        -Statistics stats
+        -HashType current_hType
+        -ProbingMethod current_pType
+        -probe(hash: unsigned long, i: int) int
+        +URLHashTable(tableSize: int)
+        +~URLHashTable()
+        +setHashFunction(hashType: HashType) void
+        +setProbingMethod(probingType: ProbingMethod) void
+        +searchURL(url: string) bool
+        +insertURL(url: string) bool
+        +deleteURL(url: string) bool
+        +displayTable() void
+        +displayStats() void
+        +resetStats() void
+        +getLoadFactor() double
+        +getSize() int
+        +getNumElements() int
+        +getStats() Statistics
+    }
+    
+    class TestResult {
+        <<structure>>
+        +int tableSize
+        +double loadFactor
+        +double avgComparisons
+        +int maxComparisons
+        +double avgTime
+        +int numQueries
+    }
+    
+    class Main {
+        <<main program>>
+        +loadURLsFromFile(filename: string, tableSize: int&) vector~string~
+        +runTest(size: int, urls: vector~string~, hashType: HashType, probingType: ProbingMethod) TestResult
+        +isValidURL(url: string) bool
+        +main() int
+    }
+
+    URLHashTable *-- HashEntry : contains vector of
+    URLHashTable *-- HashFunctions : uses
+    URLHashTable *-- Statistics : tracks performance
+    URLHashTable ..> HashTypes : uses
+    URLHashTable ..> ProbingMethod : uses
+    HashEntry ..> SlotStatus : uses
+    Statistics ..> HashTypes : uses
+    Main ..> URLHashTable : creates and tests
+    Main ..> TestResult : uses for batch testing
+    Main ..> HashTypes : configures
+    Main ..> ProbingMethod : configures
+
+    note for URLHashTable "Core hash table implementation\nwith open addressing"
+    note for HashFunctions "Three hash algorithms:\n1. Bitwise Mixing\n2. Polynomial Rolling\n3. Universal Hashing"
+    note for Statistics "Tracks performance metrics:\n- Comparisons\n- Execution time\n- Query count"
+```
+
+### Class Relationships
+
+- **URLHashTable** is the main container that:
+  - Contains a vector of `HashEntry` objects
+  - Uses `HashFunctions` for computing hash values
+  - Uses `Statistics` for performance tracking
+  - Depends on `HashTypes` and `ProbingMethod` enums for configuration
+
+- **Main** program:
+  - Creates and configures `URLHashTable` instances
+  - Uses `TestResult` structures to store batch test results
+  - Configures hash functions and probing methods
+
+- **HashEntry** represents individual table slots with URL and status
+
+- **Statistics** tracks performance metrics independently
 
 ---
 
