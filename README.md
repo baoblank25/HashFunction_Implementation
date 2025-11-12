@@ -54,25 +54,37 @@ The system provides **six distinct configurations** combining three hash functio
 
 ```mermaid
 classDiagram
-    class URLHashTable {
-        -vector~HashEntry~ table
-        -HashFunctions hashFunc
-        -Statistics stats
-        -HashType current_hType
-        -ProbingMethod current_pType
-        +URLHashTable(tableSize: int)
-        +searchURL(url: string) bool
-        +insertURL(url: string) bool
-        +deleteURL(url: string) bool
-        +displayStats() void
+    class HashTypes {
+        <<enumeration>>
+        BITWISE_HASH
+        POLYNOMIAL_HASH
+        UNIVERSAL_HASH
+    }
+    
+    class ProbingMethod {
+        <<enumeration>>
+        LINEAR_PROBING
+        QUADRATIC_PROBING
+    }
+    
+    class SlotStatus {
+        <<enumeration>>
+        EMPTY
+        OCCUPIED
+        DELETED
     }
     
     class HashEntry {
         +string url
         +SlotStatus status
+        +HashEntry()
     }
     
     class HashFunctions {
+        -unsigned long k
+        -unsigned long a
+        -unsigned long b
+        +HashFunctions()
         +bitwiseHash(url, size) unsigned long
         +polynomialHash(url, size) unsigned long
         +universalHash(url, size) unsigned long
@@ -81,15 +93,73 @@ classDiagram
     class Statistics {
         -int numComp
         -int maxComp
+        -int numQueries
         -clock_t totalTime
+        +Statistics()
         +recordQuery(comp, time) void
+        +reset() void
+        +display(tableSize, numElements, loadFactor, hashType) void
+        +getTotalComp() int
+        +getMaxComp() int
+        +getNumQueries() int
         +getAvgComparisons() double
         +getAvgTime() double
+    }
+    
+    class URLHashTable {
+        -vector~HashEntry~ table
+        -int size
+        -int numElements
+        -HashFunctions hashFunc
+        -Statistics stats
+        -HashType current_hType
+        -ProbingMethod current_pType
+        -probe(hash, i) int
+        +URLHashTable(tableSize)
+        +~URLHashTable()
+        +setHashFunction(hashType) void
+        +setProbingMethod(probingType) void
+        +searchURL(url) bool
+        +insertURL(url) bool
+        +deleteURL(url) bool
+        +displayTable() void
+        +displayStats() void
+        +resetStats() void
+        +getLoadFactor() double
+        +getSize() int
+        +getNumElements() int
+        +getStats() Statistics
+    }
+    
+    class TestResult {
+        <<structure>>
+        +int tableSize
+        +double loadFactor
+        +double avgComparisons
+        +int maxComparisons
+        +double avgTime
+        +int numQueries
+    }
+    
+    class Main {
+        <<main.cpp>>
+        +loadURLsFromFile(filename, tableSize) vector~string~
+        +runTest(size, urls, hashType, probingType) TestResult
+        +isValidURL(url) bool
+        +main() int
     }
 
     URLHashTable *-- HashEntry
     URLHashTable *-- HashFunctions
     URLHashTable *-- Statistics
+    URLHashTable ..> HashTypes
+    URLHashTable ..> ProbingMethod
+    HashEntry ..> SlotStatus
+    Statistics ..> HashTypes
+    Main ..> URLHashTable
+    Main ..> TestResult
+    Main ..> HashTypes
+    Main ..> ProbingMethod
 ```
 
 ---
