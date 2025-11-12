@@ -1,6 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: HashFunctions.h
-
 #ifndef HASHFUNCTIONS_H
 #define HASHFUNCTIONS_H
 

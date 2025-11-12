@@ -1,7 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: Statistics.cpp
-// Description: Implementation of statistics tracking per assignment requirements
-
 #include "../include/Statistics.h"
 
 Statistics::Statistics(){
@@ -64,3 +60,18 @@ int Statistics::getMaxComp() const{
 int Statistics::getNumQueries() const{
     return numQueries;
 }
+
+double Statistics::getAvgComparisons() const{
+    if(numQueries > 0){
+        return (double)numComp / numQueries;
+    }
+    return 0.0;
+}
+
+double Statistics::getAvgTime() const{
+    if(numQueries > 0){
+        return ((double)totalTime / CLOCKS_PER_SEC) / numQueries;
+    }
+    return 0.0;
+}
+

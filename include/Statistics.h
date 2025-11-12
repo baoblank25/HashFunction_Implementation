@@ -1,6 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: Statistics.h
-
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
@@ -27,6 +24,8 @@ public:
     int getTotalComp() const;
     int getMaxComp() const;
     int getNumQueries() const;
+    double getAvgComparisons() const;
+    double getAvgTime() const;
 };
 
 #endif

@@ -1,6 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: HashEntry.h
-
 #ifndef HASHENTRY_H
 #define HASHENTRY_H
 

@@ -1,7 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: main.cpp
-// Description: Main program implementing open addressing hash table per assignment
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,7 +9,17 @@
 
 using namespace std;
 
-// Helper function to check if URL starts with valid HTTP prefix
+//Structure to hold test results
+struct TestResult {
+    int tableSize;
+    double loadFactor;
+    double avgComparisons;
+    int maxComparisons;
+    double avgTime;
+    int numQueries;
+};
+
+//Helper function
 bool isValidURL(const string& url) {
     if(url.length() < 6) return false;
     
@@ -25,7 +31,7 @@ bool isValidURL(const string& url) {
     return false;
 }
 
-// Function to load URLs from CSV file
+//Function to load URLs from CSV file
 vector<string> loadURLsFromFile(const string& filename, int& tableSize) {
     vector<string> urls;
     ifstream inputFile(filename);
@@ -35,20 +41,19 @@ vector<string> loadURLsFromFile(const string& filename, int& tableSize) {
         return urls;
     }
     
-    // Read table size from first line
+    //Read table size from first line
     string line;
     if(getline(inputFile, line)){
         stringstream ss(line);
         ss >> tableSize;
     }
     
-    // Read all URLs
+    //Read all URLs
     while(getline(inputFile, line)){
         stringstream ss(line);
         string url;
         
         while(getline(ss, url, ',')){
-            // Trim whitespace
             size_t start = url.find_first_not_of(" \t\r\n");
             size_t end = url.find_last_not_of(" \t\r\n");
             
@@ -66,15 +71,15 @@ vector<string> loadURLsFromFile(const string& filename, int& tableSize) {
     return urls;
 }
 
-// Function to run a single test with given configuration
-void runTest(int size, const vector<string>& urls, HashType hashType, ProbingMethod probingType) {
+//Function to run a single test
+TestResult runTest(int size, const vector<string>& urls, HashType hashType, ProbingMethod probingType) {
     URLHashTable* hashTable = new URLHashTable(size);
     hashTable->setHashFunction(hashType);
     hashTable->setProbingMethod(probingType);
     
     int counter = 0;
     
-    // Insert all URLs
+    //Insert all URLs
     for(const string& url : urls){
         if(hashTable->insertURL(url)){
             counter++;
@@ -85,14 +90,24 @@ void runTest(int size, const vector<string>& urls, HashType hashType, ProbingMet
     
     hashTable->displayStats();
     
+    //Collect stats
+    TestResult result;
+    result.tableSize = size;
+    result.loadFactor = hashTable->getLoadFactor();
+    result.avgComparisons = hashTable->getStats().getAvgComparisons();
+    result.maxComparisons = hashTable->getStats().getMaxComp();
+    result.avgTime = hashTable->getStats().getAvgTime();
+    result.numQueries = hashTable->getStats().getNumQueries();
+    
     delete hashTable;
+    return result;
 }
 
 int main(){
     string filename;
     int originalSize = 0;
     
-    // Get CSV filename and load URLs
+    //Get CSV filename and load URLs
     cout << "Enter CSV filename: ";
     getline(cin, filename);
     
@@ -106,7 +121,7 @@ int main(){
     cout << "Loaded " << urls.size() << " URLs from file." << endl;
     cout << "Original table size from CSV: " << originalSize << endl;
     
-    // Choose testing mode
+    //Choose testing mode
     int mode;
     while(true){
         cout << "\nSelect mode:" << endl;
@@ -130,7 +145,7 @@ int main(){
         }
     }
     
-    // Get hash function type
+    //Get hash function type
     int hashChoice;
     while(true){
         cout << "\nSelect hash function:" << endl;
@@ -169,7 +184,7 @@ int main(){
         cout << "Using Universal Hashing" << endl;
     }
     
-    // Get probing method
+    //Get probing method
     int probingChoice;
     while(true){
         cout << "\nSelect probing method:" << endl;
@@ -197,7 +212,6 @@ int main(){
     cout << "Using " << (probingChoice == 1 ? "Linear" : "Quadratic") << " Probing" << endl;
     
     if(mode == 1){
-        // SINGLE TABLE SIZE MODE (Interactive)
         int size;
         cout << "\nEnter hash table size: ";
         cin >> size;
@@ -209,7 +223,7 @@ int main(){
         
         int counter = 0;
         
-        // Insert URLs
+        //Insert URLs
         cout << "\nInserting URLs into hash table..." << endl;
         for(const string& url : urls){
             if(hashTable->insertURL(url)){
@@ -291,27 +305,28 @@ int main(){
         delete hashTable;
     }
     else{
-        // BATCH MODE - Test multiple table sizes
         cout << "Testing same " << urls.size() << " URLs with different table sizes" << endl;
         
-        // Generate at least 10 different table sizes
-        // Using different load factors: from sparse (α≈0.3) to very full (α≈0.95)
+        //Generate at least 10 different table sizes
         vector<int> tableSizes;
         int numURLs = urls.size();
         
-        // Calculate sizes for different load factors
-        tableSizes.push_back(numURLs * 3);      // α ≈ 0.33
-        tableSizes.push_back(numURLs * 2);      // α ≈ 0.50
-        tableSizes.push_back((numURLs * 3) / 2); // α ≈ 0.67
-        tableSizes.push_back((numURLs * 4) / 3); // α ≈ 0.75
-        tableSizes.push_back((numURLs * 5) / 4); // α ≈ 0.80
-        tableSizes.push_back((numURLs * 10) / 9); // α ≈ 0.90
-        tableSizes.push_back((numURLs * 20) / 19); // α ≈ 0.95
-        tableSizes.push_back(numURLs + 100);    // α varies
-        tableSizes.push_back(numURLs + 50);     // α varies
-        tableSizes.push_back(numURLs + 10);     // α varies
+        //Calculate sizes for different load factors
+        tableSizes.push_back(numURLs * 3);
+        tableSizes.push_back(numURLs * 2);
+        tableSizes.push_back((numURLs * 3) / 2);
+        tableSizes.push_back((numURLs * 4) / 3); 
+        tableSizes.push_back((numURLs * 5) / 4);
+        tableSizes.push_back((numURLs * 10) / 9);
+        tableSizes.push_back((numURLs * 20) / 19);
+        tableSizes.push_back(numURLs + 100);
+        tableSizes.push_back(numURLs + 50);
+        tableSizes.push_back(numURLs + 10);
         
-        // Run tests for each table size
+        //Store results for summary
+        vector<TestResult> results;
+        
+        //Run tests for each table size
         for(int i = 0; i < tableSizes.size(); i++){
             int size = tableSizes[i];
             double expectedLoadFactor = (double)numURLs / size;
@@ -319,14 +334,75 @@ int main(){
             cout << "TEST #" << (i+1) << " - Table Size: " << size << endl;
             cout << "Expected Load Factor: " << fixed << setprecision(4) << expectedLoadFactor << endl;
             
-            runTest(size, urls, hashType, probingType);
+            TestResult result = runTest(size, urls, hashType, probingType);
+            results.push_back(result);
             
-            // Pause between tests
+            //Pause between tests
             if(i < tableSizes.size() - 1){
                 cout << "\nPress Enter to continue to next test...";
                 cin.get();
             }
         }
+        
+        //Display summary
+        cout << "\n\n" << endl;
+        cout << "BATCH TEST SUMMARY" << endl;
+        
+        //Find best and worst based on average comparisons
+        int bestIdx = 0;
+        int worstIdx = 0;
+        
+        for(int i = 1; i < results.size(); i++){
+            if(results[i].avgComparisons < results[bestIdx].avgComparisons){
+                bestIdx = i;
+            }
+            if(results[i].avgComparisons > results[worstIdx].avgComparisons){
+                worstIdx = i;
+            }
+        }
+        
+        //Display all results in table format
+        cout << "\nAll Test Results:" << endl;
+        cout << fixed << setprecision(4);
+        cout << left << setw(12) << "Table Size" 
+             << setw(15) << "Load Factor" 
+             << setw(18) << "Avg Comparisons"
+             << setw(18) << "Max Comparisons"
+             << setw(18) << "Avg Time (s)" << endl;
+        cout << string(81, '-') << endl;
+        
+        for(int i = 0; i < results.size(); i++){
+            cout << left << setw(12) << results[i].tableSize
+                 << setw(15) << results[i].loadFactor
+                 << setw(18) << results[i].avgComparisons
+                 << setw(18) << results[i].maxComparisons
+                 << fixed << setprecision(9) << setw(18) << results[i].avgTime
+                 << endl;
+        }
+        
+        //Display best performance
+        cout << "BEST PERFORMANCE (Lowest Average Comparisons):" << endl;
+        cout << fixed << setprecision(4);
+        cout << "Table Size:           " << results[bestIdx].tableSize << endl;
+        cout << "Load Factor:          " << results[bestIdx].loadFactor << endl;
+        cout << "Avg Comparisons:      " << results[bestIdx].avgComparisons << endl;
+        cout << "Max Comparisons:      " << results[bestIdx].maxComparisons << endl;
+        cout << fixed << setprecision(9);
+        cout << "Avg Time per Query:   " << results[bestIdx].avgTime << " seconds" << endl;
+        cout << fixed << setprecision(2);
+        cout << "Total Queries:        " << results[bestIdx].numQueries << endl;
+        
+        cout << "WORST PERFORMANCE (Highest Average Comparisons):" << endl;
+        cout << fixed << setprecision(4);
+        cout << "Table Size:           " << results[worstIdx].tableSize << endl;
+        cout << "Load Factor:          " << results[worstIdx].loadFactor << endl;
+        cout << "Avg Comparisons:      " << results[worstIdx].avgComparisons << endl;
+        cout << "Max Comparisons:      " << results[worstIdx].maxComparisons << endl;
+        cout << fixed << setprecision(9);
+        cout << "Avg Time per Query:   " << results[worstIdx].avgTime << " seconds" << endl;
+        cout << fixed << setprecision(2);
+        cout << "Total Queries:        " << results[worstIdx].numQueries << endl;
+        
         
     }
     

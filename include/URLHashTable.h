@@ -1,6 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: URLHashTable.h
-
 #ifndef URLHASHTABLE_H
 #define URLHASHTABLE_H
 
@@ -44,6 +41,9 @@ public:
     double getLoadFactor();
     int getSize();
     int getNumElements();
+    
+    // Get statistics
+    const Statistics& getStats() const;
 };
 
 #endif

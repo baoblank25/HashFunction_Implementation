@@ -1,6 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: HashTypes.h
-
 #ifndef HASHTYPES_H
 #define HASHTYPES_H
 

@@ -1,7 +1,3 @@
-// ASU CSE310 Hash Table Assignment
-// File: URLHashTable.cpp
-// Description: Implementation using open addressing with linear/quadratic probing
-
 #include "../include/URLHashTable.h"
 #include <iostream>
 
@@ -57,7 +53,7 @@ bool URLHashTable::searchURL(const string& url){
         }
         
         if(table[idx].status==OCCUPIED){
-            comp++;  // Count URL string comparison
+            comp++;  //Count URL string comparison
             if(table[idx].url==url){
                 found = true;
                 break;
@@ -100,10 +96,10 @@ bool URLHashTable::insertURL(const string& url){
     int i = 0;
     int firstAvailable = -1;
     
-    // Search for URL and track first available slot
+    //Search for URL and track first available slot
     while(i<size){
         if(table[idx].status==EMPTY){
-            // Found empty slot - URL doesn't exist
+            //Found empty slot - URL doesn't exist
             if(firstAvailable == -1){
                 firstAvailable = idx;
             }
@@ -171,7 +167,7 @@ bool URLHashTable::deleteURL(const string& url){
         }
         
         if(table[idx].status==OCCUPIED){
-            comp++;  // Count URL string comparison
+            comp++;  //Count URL string comparison
             if(table[idx].url==url){
                 table[idx].status = DELETED;
                 table[idx].url = "";
@@ -221,10 +217,10 @@ void URLHashTable::displayStats(){
     cout << "\nConfiguration:" << endl;
     cout << "Hash Function: ";
     if(current_hType==BITWISE_HASH){
-        cout << "Bitwise Mixing Hash (MurmurHash-style)" << endl;
+        cout << "Bitwise Mixing Hash" << endl;
     }
     else if(current_hType==POLYNOMIAL_HASH){
-        cout << "Polynomial Rolling Hash (DJB2-style)" << endl;
+        cout << "Polynomial Rolling Hash" << endl;
     }
     else{
         cout << "Universal Hashing" << endl;
@@ -257,3 +253,8 @@ int URLHashTable::getSize(){
 int URLHashTable::getNumElements(){
     return numElements;
 }
+
+const Statistics& URLHashTable::getStats() const{
+    return stats;
+}
+
