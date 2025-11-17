@@ -343,7 +343,7 @@ Using Quadratic Probing
 ### Test Configuration
 
 ```
-URLs Tested: 1,013 diverse URLs
+URLs Tested: 1,016 diverse URLs
 Table Sizes: 10+ sizes from 1,023 to 3,039
 Load Factors: 0.33, 0.50, 0.67, 0.75, 0.80, 0.90, 0.95
 ```

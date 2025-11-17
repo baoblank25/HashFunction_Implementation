@@ -368,7 +368,7 @@ int main(){
              << setw(15) << "Load Factor" 
              << setw(18) << "Avg Comparisons"
              << setw(18) << "Max Comparisons"
-             << setw(18) << "Avg Time (s)" << endl;
+             << setw(18) << "Avg Time" << endl;
         cout << string(81, '-') << endl;
         
         for(int i = 0; i < results.size(); i++){
@@ -376,7 +376,7 @@ int main(){
                  << setw(15) << results[i].loadFactor
                  << setw(18) << results[i].avgComparisons
                  << setw(18) << results[i].maxComparisons
-                 << fixed << setprecision(9) << setw(18) << results[i].avgTime
+                 << fixed << setprecision(4) << setw(18) << (results[i].avgTime * 1e6)
                  << endl;
         }
         
@@ -387,8 +387,8 @@ int main(){
         cout << "Load Factor:          " << results[bestIdx].loadFactor << endl;
         cout << "Avg Comparisons:      " << results[bestIdx].avgComparisons << endl;
         cout << "Max Comparisons:      " << results[bestIdx].maxComparisons << endl;
-        cout << fixed << setprecision(9);
-        cout << "Avg Time per Query:   " << results[bestIdx].avgTime << " seconds" << endl;
+        cout << fixed << setprecision(4);
+        cout << "Avg Time per Query:   " << (results[bestIdx].avgTime * 1e6) << " microseconds" << endl;
         cout << fixed << setprecision(2);
         cout << "Total Queries:        " << results[bestIdx].numQueries << endl;
         
@@ -398,8 +398,8 @@ int main(){
         cout << "Load Factor:          " << results[worstIdx].loadFactor << endl;
         cout << "Avg Comparisons:      " << results[worstIdx].avgComparisons << endl;
         cout << "Max Comparisons:      " << results[worstIdx].maxComparisons << endl;
-        cout << fixed << setprecision(9);
-        cout << "Avg Time per Query:   " << results[worstIdx].avgTime << " seconds" << endl;
+        cout << fixed << setprecision(4);
+        cout << "Avg Time per Query:   " << (results[worstIdx].avgTime * 1e6) << " microseconds" << endl;
         cout << fixed << setprecision(2);
         cout << "Total Queries:        " << results[worstIdx].numQueries << endl;
         
