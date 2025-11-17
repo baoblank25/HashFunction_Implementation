@@ -368,7 +368,7 @@ int main(){
              << setw(15) << "Load Factor" 
              << setw(18) << "Avg Comparisons"
              << setw(18) << "Max Comparisons"
-             << setw(18) << "Avg Time" << endl;
+             << setw(18) << "Avg Time(ms)" << endl;
         cout << string(81, '-') << endl;
         
         for(int i = 0; i < results.size(); i++){
